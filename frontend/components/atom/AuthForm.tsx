@@ -1,33 +1,103 @@
 import Link from "next/link";
 import styled from "styled-components";
 import { useState } from "react";
+import Cookie from "universal-cookie";
+import { useRouter } from "next/router";
+
+const cookie = new Cookie();
 
 const AuthForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
 
+  const router = useRouter();
+
+  const login = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_RESTAPI_URL}auth/jwt/create/`, {
+        method: "POST",
+        body: JSON.stringify({ username: username, password: password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (res.status === 400) {
+            throw "authentication failed";
+          } else if (res.ok) {
+            return res.json();
+          }
+        })
+        .then((data) => {
+          const options = { path: "/" };
+          cookie.set("access_token", data.access, options);
+        });
+      router.push("/");
+    } catch (err) {
+      alert(err);
+    }
+  };
+
+  const authUser = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      if (isLogin) {
+        await login();
+      } else {
+        await fetch(`${process.env.NEXT_PUBLIC_RESTAPI_URL}register/`, {
+          method: "POST",
+          body: JSON.stringify({ username: username, password: password }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then((res) => {
+          if (res.status === 400) {
+            throw "authentication failed";
+          }
+        });
+        await login();
+      }
+    } catch (err) {
+      alert(err);
+    }
+  };
+
   return (
     <MainContainer>
-      <form style={{ height: "600px" }}>
+      <form style={{ height: "600px" }} onSubmit={authUser}>
         <MainWrapper>
           <H3Text>django-nextjs-todo</H3Text>
           <SubWrapper>
-            <UsernameForm placeholder="username" />
-            <PasswordForm placeholder="password" />
+            <UsernameForm
+              type="text"
+              placeholder="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <PasswordForm
+              type="password"
+              placeholder="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </SubWrapper>
           <H5Text>
             <Link href="#">
               <A>パスワードを忘れた場合はこちら</A>
             </Link>
           </H5Text>
-          <Button>{isLogin ? "ログイン" : "新規作成"}</Button>
-          <H5Text>
-            アカウントをお持ちでない場合{" "}
-            <Link href="#">
-              <A>新規作成</A>
-            </Link>
-          </H5Text>
+          <Button type="submit">{isLogin ? "ログイン" : "新規作成"}</Button>
+          {isLogin ? (
+            <H5Text>
+              アカウントをお持ちでない場合{" "}
+              <A onClick={(e) => setIsLogin(!isLogin)}>新規作成</A>
+            </H5Text>
+          ) : (
+            <H5Text>
+              <A onClick={(e) => setIsLogin(!isLogin)}>戻る</A>
+            </H5Text>
+          )}
         </MainWrapper>
       </form>
     </MainContainer>
