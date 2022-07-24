@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { FC, ReactNode } from "react";
+import styled from "styled-components";
 
 type Props = {
   title: string;
@@ -12,9 +13,13 @@ const Layout: FC<Props> = ({ title, children }) => {
       <Head>
         <title>{title}</title>
       </Head>
-      <main>{children}</main>
+      <Main>{children}</Main>
     </div>
   );
 };
 
 export default Layout;
+
+const Main = styled.main`
+  height: 100vh;
+`;

@@ -34,10 +34,12 @@ export default Todo;
 
 const MainContainer = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  width: 50%;
+  width: 80%;
   margin: 0 auto;
+  padding: 10px;
+  border-bottom: 1px solid #e6ecf0;
 `;
 
 const List = styled.li`
@@ -45,4 +47,10 @@ const List = styled.li`
 `;
 
 const IconWrapper = styled.div``;
-const TodoWrapper = styled.div``;
+const TodoWrapper = styled.div`
+  font-size: 15px;
+  font-weight: bold;
+  &:hover {
+    color: #50b7f5;
+  }
+`;
