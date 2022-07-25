@@ -14,6 +14,7 @@ type Props = {
   todo: {
     id: string;
     title: string;
+    memo: string;
     created_at: Date;
   };
 };
@@ -22,7 +23,7 @@ export const getStaticPaths: GetStaticPaths<Params> = async () => {
   const paths = await getAllTodoIds();
   return {
     paths,
-    fallback: false,
+    fallback: "blocking",
   };
 };
 
@@ -52,6 +53,7 @@ const Post: NextPage<Props> = ({ todo }) => {
           <TodoWrapper>
             <h3>ID：　{todo.id}</h3>
             <h3>タスク：　{todo.title}</h3>
+            <h3>タスク：　{todo.memo}</h3>
             <h3>
               登録日：　
               {String(todo.created_at).substring(

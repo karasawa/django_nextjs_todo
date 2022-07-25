@@ -2,17 +2,38 @@ import { FC } from "react";
 import Link from "next/link";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import IconButton from "@mui/material/IconButton";
 import styled from "styled-components";
+import Cookie from "universal-cookie";
 
 type Props = {
   todo: {
     id: string;
     title: string;
+    memo: string;
     created_at: Date;
   };
+  mutate: () => void;
 };
 
-const Todo: FC<Props> = ({ todo }) => {
+const cookie = new Cookie();
+
+const Todo: FC<Props> = ({ todo, mutate }) => {
+  const remove = async (id: string) => {
+    await fetch(`${process.env.NEXT_PUBLIC_RESTAPI_URL}todos/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `JWT ${cookie.get("access_token")}`,
+      },
+    }).then((res) => {
+      if (res.status === 401) {
+        alert("JWT Token not valid");
+      }
+    });
+    mutate();
+  };
+
   return (
     <List>
       <MainContainer>
@@ -22,8 +43,12 @@ const Todo: FC<Props> = ({ todo }) => {
           <Link href={`/todo/${todo.id}`}>{todo.title}</Link>
         </TodoWrapper>
         <IconWrapper>
-          <EditIcon />
-          <DeleteIcon />
+          <IconButton>
+            <EditIcon />
+          </IconButton>
+          <IconButton onClick={() => remove(todo.id)}>
+            <DeleteIcon />
+          </IconButton>
         </IconWrapper>
       </MainContainer>
     </List>

@@ -1,8 +1,9 @@
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { FC } from "react";
+import { FC, FormEvent } from "react";
 import styled from "styled-components";
 import { useState } from "react";
+import Cookie from "universal-cookie";
 
 type Props = {
   open: boolean;
@@ -21,9 +22,29 @@ const style = {
   borderRadius: 3,
 };
 
+const cookie = new Cookie();
+
 const Dialog: FC<Props> = ({ open, setOpen }) => {
   const [title, setTitle] = useState("");
   const [memo, setMemo] = useState("");
+
+  const create = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await fetch(`${process.env.NEXT_PUBLIC_RESTAPI_URL}todos/`, {
+      method: "POST",
+      body: JSON.stringify({ title: title, memo: memo }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `JWT ${cookie.get("access_token")}`,
+      },
+    }).then((res) => {
+      if (res.status === 401) {
+        alert("JWT Token not valid");
+      }
+    });
+    setTitle("");
+    setMemo("");
+  };
 
   return (
     <div>
@@ -35,7 +56,7 @@ const Dialog: FC<Props> = ({ open, setOpen }) => {
       >
         <Box sx={style}>
           <H3Text>TODOを追加</H3Text>
-          <form>
+          <form onSubmit={create}>
             <MainWrapper>
               <TitleForm
                 placeholder="todo-title"

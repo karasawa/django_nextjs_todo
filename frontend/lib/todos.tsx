@@ -1,6 +1,7 @@
 type TodoModel = {
   id: string;
   title: string;
+  memo: string;
   created_at: Date;
 };
 

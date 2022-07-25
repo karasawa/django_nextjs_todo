@@ -4,15 +4,25 @@ import styled from "styled-components";
 import { getAllTodos } from "../lib/todos";
 import Todo from "../components/atom/Todo";
 import SideBar from "../components/SideBar";
+import useSWR from "swr";
+import { useEffect } from "react";
 
 type Props = {
   sortedTodos: [
     {
       id: string;
       title: string;
+      memo: string;
       created_at: Date;
     }
   ];
+};
+
+type TodoModel = {
+  id: string;
+  title: string;
+  memo: string;
+  created_at: Date;
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
@@ -25,7 +35,25 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
+const url = `${process.env.NEXT_PUBLIC_RESTAPI_URL}list-todo/`;
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 const Home: NextPage<Props> = ({ sortedTodos }) => {
+  const { data: todos, mutate } = useSWR(url, fetcher, {
+    fallbackData: sortedTodos,
+  });
+  const filterdTodos = todos?.sort((a: TodoModel, b: TodoModel) => {
+    if (b.created_at > a.created_at) {
+      return 1;
+    } else {
+      return -1;
+    }
+  });
+
+  useEffect(() => {
+    mutate();
+  }, []);
+
   return (
     <Layout title="home">
       <MainContainer>
@@ -35,8 +63,8 @@ const Home: NextPage<Props> = ({ sortedTodos }) => {
             <Title>ホーム</Title>
           </TitleWrapper>
           <ul style={{ padding: 0 }}>
-            {sortedTodos.map((todo) => (
-              <Todo key={todo.id} todo={todo} />
+            {filterdTodos.map((todo: TodoModel) => (
+              <Todo key={todo.id} todo={todo} mutate={mutate} />
             ))}
           </ul>
         </MainWrapper>
