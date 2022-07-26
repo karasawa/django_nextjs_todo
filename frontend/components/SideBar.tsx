@@ -10,17 +10,17 @@ import styled from "styled-components";
 import SidebarOption from "./atom/SideBarOption";
 import Cookie from "universal-cookie";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import Dialog from "./Dialog";
+import { useContext } from "react";
+import { StateContext } from "../context/ContextProvider";
 
 const cookie = new Cookie();
 
 const SideBar = () => {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const { setOpen, setIsCreate, updateData } = useContext(StateContext);
 
   const logout = () => {
-    cookie.remove("access_token");
+    cookie.remove("access_token", { path: "/" });
     router.push("/auth");
   };
 
@@ -52,8 +52,15 @@ const SideBar = () => {
         active={true}
       />
       <SidebarOption text="もっとみる" Icon={MoreHorizIcon} active={false} />
-      <Button onClick={() => setOpen(true)}>TODOを追加する</Button>
-      <Dialog open={open} setOpen={setOpen} />
+      <Button
+        onClick={() => {
+          setIsCreate(true);
+          setOpen(true);
+          console.log(updateData);
+        }}
+      >
+        TODOを追加する
+      </Button>
     </MainContainer>
   );
 };

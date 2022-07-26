@@ -1,10 +1,11 @@
-import { FC } from "react";
+import { FC, useContext } from "react";
 import Link from "next/link";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import styled from "styled-components";
 import Cookie from "universal-cookie";
+import { StateContext } from "../../context/ContextProvider";
 
 type Props = {
   todo: {
@@ -19,6 +20,9 @@ type Props = {
 const cookie = new Cookie();
 
 const Todo: FC<Props> = ({ todo, mutate }) => {
+  const { setOpen, setIsCreate, setUpdateData, updateData } =
+    useContext(StateContext);
+
   const remove = async (id: string) => {
     await fetch(`${process.env.NEXT_PUBLIC_RESTAPI_URL}todos/${id}`, {
       method: "DELETE",
@@ -43,7 +47,14 @@ const Todo: FC<Props> = ({ todo, mutate }) => {
           <Link href={`/todo/${todo.id}`}>{todo.title}</Link>
         </TodoWrapper>
         <IconWrapper>
-          <IconButton>
+          <IconButton
+            onClick={() => {
+              setUpdateData({ todo });
+              setIsCreate(false);
+              setOpen(true);
+              console.log(updateData);
+            }}
+          >
             <EditIcon />
           </IconButton>
           <IconButton onClick={() => remove(todo.id)}>

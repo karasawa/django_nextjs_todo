@@ -141,6 +141,7 @@ const Button = styled.button`
   color: #fff;
   background-color: #50b7f5;
   cursor: pointer;
+  outline: none;
 `;
 const H3Text = styled.h3`
   text-align: center;

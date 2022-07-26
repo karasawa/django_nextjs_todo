@@ -6,6 +6,8 @@ import Todo from "../components/atom/Todo";
 import SideBar from "../components/SideBar";
 import useSWR from "swr";
 import { useEffect } from "react";
+import { ContextProvider } from "../context/ContextProvider";
+import Dialog from "../components/Dialog";
 
 type Props = {
   sortedTodos: [
@@ -55,21 +57,24 @@ const Home: NextPage<Props> = ({ sortedTodos }) => {
   }, []);
 
   return (
-    <Layout title="home">
-      <MainContainer>
-        <SideBar />
-        <MainWrapper>
-          <TitleWrapper>
-            <Title>ホーム</Title>
-          </TitleWrapper>
-          <ul style={{ padding: 0 }}>
-            {filterdTodos.map((todo: TodoModel) => (
-              <Todo key={todo.id} todo={todo} mutate={mutate} />
-            ))}
-          </ul>
-        </MainWrapper>
-      </MainContainer>
-    </Layout>
+    <ContextProvider>
+      <Layout title="home">
+        <MainContainer>
+          <SideBar />
+          <MainWrapper>
+            <TitleWrapper>
+              <Title>ホーム</Title>
+            </TitleWrapper>
+            <ul style={{ padding: 0 }}>
+              {filterdTodos.map((todo: TodoModel) => (
+                <Todo key={todo.id} todo={todo} mutate={mutate} />
+              ))}
+            </ul>
+          </MainWrapper>
+        </MainContainer>
+        <Dialog mutate={mutate} />
+      </Layout>
+    </ContextProvider>
   );
 };
 

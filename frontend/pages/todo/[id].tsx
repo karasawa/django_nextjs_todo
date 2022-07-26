@@ -5,13 +5,15 @@ import Layout from "../../components/Layout";
 import styled from "styled-components";
 import SideBar from "../../components/SideBar";
 import { useRouter } from "next/router";
+import useSWR from "swr";
+import { useEffect } from "react";
 
 interface Params extends ParsedUrlQuery {
   id: string;
 }
 
 type Props = {
-  todo: {
+  staticTodo: {
     id: string;
     title: string;
     memo: string;
@@ -30,17 +32,31 @@ export const getStaticPaths: GetStaticPaths<Params> = async () => {
 export const getStaticProps: GetStaticProps<Props, Params> = async ({
   params,
 }) => {
-  const todo = await getTodo(params!.id);
+  const staticTodo = await getTodo(params!.id);
   return {
     props: {
-      todo,
+      staticTodo,
     },
     revalidate: 3,
   };
 };
 
-const Post: NextPage<Props> = ({ todo }) => {
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+const Post: NextPage<Props> = ({ staticTodo }) => {
   const router = useRouter();
+
+  const { data: todo, mutate } = useSWR(
+    `${process.env.NEXT_PUBLIC_RESTAPI_URL}detail-todo/${staticTodo.id}/`,
+    fetcher,
+    {
+      fallbackData: staticTodo,
+    }
+  );
+
+  useEffect(() => {
+    mutate();
+  }, []);
 
   return (
     <Layout title={`${todo.id}`}>
@@ -53,7 +69,7 @@ const Post: NextPage<Props> = ({ todo }) => {
           <TodoWrapper>
             <h3>ID：　{todo.id}</h3>
             <h3>タスク：　{todo.title}</h3>
-            <h3>タスク：　{todo.memo}</h3>
+            <h3>メモ：　{todo.memo}</h3>
             <h3>
               登録日：　
               {String(todo.created_at).substring(
