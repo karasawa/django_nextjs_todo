@@ -2,6 +2,7 @@ type TodoModel = {
   id: string;
   title: string;
   memo: string;
+  user: string;
   created_at: Date;
 };
 

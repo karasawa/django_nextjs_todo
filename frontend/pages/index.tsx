@@ -15,6 +15,7 @@ type Props = {
       id: string;
       title: string;
       memo: string;
+      user: string;
       created_at: Date;
     }
   ];
@@ -24,6 +25,7 @@ type TodoModel = {
   id: string;
   title: string;
   memo: string;
+  user: string;
   created_at: Date;
 };
 
@@ -54,6 +56,7 @@ const Home: NextPage<Props> = ({ sortedTodos }) => {
 
   useEffect(() => {
     mutate();
+    console.log(todos);
   }, []);
 
   return (

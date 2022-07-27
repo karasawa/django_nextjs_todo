@@ -17,6 +17,7 @@ type Props = {
     id: string;
     title: string;
     memo: string;
+    user: string;
     created_at: Date;
   };
 };
@@ -77,6 +78,7 @@ const Post: NextPage<Props> = ({ staticTodo }) => {
                 String(todo.created_at).indexOf("")
               )}
             </h3>
+            <h3>作成者：　{todo.user}</h3>
           </TodoWrapper>
           <ButtonWrapper>
             <BackButton onClick={() => router.push("/")}>戻る</BackButton>

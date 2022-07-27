@@ -21,6 +21,7 @@ const SideBar = () => {
 
   const logout = () => {
     cookie.remove("access_token", { path: "/" });
+    cookie.remove("request_user", { path: "/" });
     router.push("/auth");
   };
 

@@ -1,5 +1,4 @@
 from rest_framework import generics, viewsets
-from rest_framework.permissions import AllowAny
 from .serializers import UserSerializer, TodoSerializer
 from .models import Todo
 

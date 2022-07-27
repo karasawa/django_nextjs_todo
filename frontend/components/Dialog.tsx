@@ -27,18 +27,18 @@ const cookie = new Cookie();
 const Dialog: FC<Props> = ({ mutate }) => {
   const { open, setOpen, isCreate, updateData, setUpdateData } =
     useContext(StateContext);
-  const [title, setTitle] = useState(
-    updateData.todo.title === "" ? "" : updateData.todo.title
-  );
-  const [memo, setMemo] = useState(
-    updateData.todo.memo === "" ? "" : updateData.todo.memo
-  );
+  const [title, setTitle] = useState(updateData.todo.title);
+  const [memo, setMemo] = useState(updateData.todo.memo);
 
   const create = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await fetch(`${process.env.NEXT_PUBLIC_RESTAPI_URL}todos/`, {
       method: "POST",
-      body: JSON.stringify({ title: title, memo: memo }),
+      body: JSON.stringify({
+        title: title,
+        memo: memo,
+        user: cookie.get("request_user"),
+      }),
       headers: {
         "Content-Type": "application/json",
         Authorization: `JWT ${cookie.get("access_token")}`,
@@ -51,7 +51,7 @@ const Dialog: FC<Props> = ({ mutate }) => {
     setTitle("");
     setMemo("");
     setUpdateData({
-      todo: { id: "", title: "", memo: "", created_at: new Date() },
+      todo: { id: "", title: "", memo: "", user: "", created_at: new Date() },
     });
     mutate();
   };
@@ -76,7 +76,7 @@ const Dialog: FC<Props> = ({ mutate }) => {
     setTitle("");
     setMemo("");
     setUpdateData({
-      todo: { id: "", title: "", memo: "", created_at: new Date() },
+      todo: { id: "", title: "", memo: "", user: "", created_at: new Date() },
     });
     mutate();
   };
@@ -87,7 +87,13 @@ const Dialog: FC<Props> = ({ mutate }) => {
         open={open}
         onClose={(open) => {
           setUpdateData({
-            todo: { id: "", title: "", memo: "", created_at: new Date() },
+            todo: {
+              id: "",
+              title: "",
+              memo: "",
+              user: "",
+              created_at: new Date(),
+            },
           });
           setOpen(!open);
         }}

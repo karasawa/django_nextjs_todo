@@ -16,6 +16,7 @@ type TodoModel = {
     id: string;
     title: string;
     memo: string;
+    user: string;
     created_at: Date;
   };
 };
@@ -36,7 +37,7 @@ export const ContextProvider: FC<Props> = ({ children }) => {
   const [isCreate, setIsCreate] = useState(true);
 
   const date = new Date();
-  const todo = { id: "", title: "", memo: "", created_at: date };
+  const todo = { id: "", title: "", memo: "", user: "", created_at: date };
   const [updateData, setUpdateData] = useState({ todo });
 
   return (

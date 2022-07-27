@@ -12,6 +12,7 @@ type Props = {
     id: string;
     title: string;
     memo: string;
+    user: string;
     created_at: Date;
   };
   mutate: () => void;
@@ -24,7 +25,7 @@ const Todo: FC<Props> = ({ todo, mutate }) => {
     useContext(StateContext);
 
   const remove = async (id: string) => {
-    await fetch(`${process.env.NEXT_PUBLIC_RESTAPI_URL}todos/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_RESTAPI_URL}todos/${id}/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

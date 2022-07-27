@@ -32,6 +32,7 @@ const AuthForm = () => {
         .then((data) => {
           const options = { path: "/" };
           cookie.set("access_token", data.access, options);
+          cookie.set("request_user", username, options);
         });
       router.push("/");
     } catch (err) {
